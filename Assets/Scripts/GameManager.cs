@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public int totalScore = 0;
     
-    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TMP_Text scoreText;
 
     private void Awake()
     {
@@ -38,6 +38,10 @@ public class GameManager : MonoBehaviour
         if (scoreText != null)
         {
             scoreText.text = "Score: " + totalScore;
+        }
+        else
+        {
+            Debug.LogWarning("GameManager: Score Text is not assigned in Inspector!");
         }
     }
 }
