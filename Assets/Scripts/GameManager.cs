@@ -5,8 +5,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public int totalScore = 0;
-
-    [SerializeField] private TMP_Text scoreText;
+    
+    [SerializeField] private TextMeshProUGUI scoreText;
 
     private void Awake()
     {
@@ -24,7 +24,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         UpdateScoreUI();
-        scoreText = scoreTextObject.GetComponent<TMP_Text>();
     }
 
     public void AddScore(int amount)
