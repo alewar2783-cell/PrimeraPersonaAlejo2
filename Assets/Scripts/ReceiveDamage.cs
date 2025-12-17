@@ -4,16 +4,61 @@ using TMPro;
 
 public class ReceiveDamage : MonoBehaviour
 {
+    public enum EnemyType
+    {
+        Common,
+        Heavy,
+        Ranged
+    }
+
+    [SerializeField] private EnemyType enemyType;
     [SerializeField] private int health = 100;
+    private int maxHealth;
+    private int damage;
+    private float speed;
+
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private Image healthBar;
 
     [SerializeField] private GameObject sangrePrefab;
     [SerializeField] private Transform puntoImpacto;
 
+    [Header("Loot System")]
+    [SerializeField] private GameObject normalCoinPrefab;
+    [SerializeField] private GameObject specialCoinPrefab;
+
+    void Awake()
+    {
+        InitializeStats();
+    }
+
     void Start()
     {
         UpdateUI();
+    }
+
+    private void InitializeStats()
+    {
+        switch (enemyType)
+        {
+            case EnemyType.Common:
+                maxHealth = 100;
+                damage = 15;
+                speed = 20f;
+                break;
+            case EnemyType.Heavy:
+                maxHealth = 150;
+                damage = 25;
+                speed = 15f;
+                break;
+            case EnemyType.Ranged:
+                maxHealth = 50;
+                damage = 15;
+                speed = 10f;
+                break;
+        }
+
+        health = maxHealth;
     }
 
     void Update()
@@ -48,6 +93,8 @@ public class ReceiveDamage : MonoBehaviour
             
             Mision.instancia?.EnemigoEliminado();
 
+            DropLoot();
+
             Destroy(gameObject);
         }
 
@@ -55,6 +102,21 @@ public class ReceiveDamage : MonoBehaviour
         {
             Debug.Log("Salud restante: " + health);
         }
+    }
+
+    private void DropLoot()
+    {
+        float dropChance = Random.Range(0f, 100f);
+
+        if (dropChance < 50f) 
+        {
+            if (normalCoinPrefab != null) Instantiate(normalCoinPrefab, transform.position, Quaternion.identity);
+        }
+        else if (dropChance < 75f) 
+        {
+            if (specialCoinPrefab != null) Instantiate(specialCoinPrefab, transform.position, Quaternion.identity);
+        }
+        // Remaining 25% is no drop
     }
 
     private void SpawnSangre(Collision collision)
@@ -75,13 +137,13 @@ public class ReceiveDamage : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No se asignó un prefab de sangre en el inspector.");
+            Debug.LogWarning("No se asignÃ³ un prefab de sangre en el inspector.");
         }
     }
 
     private void UpdateUI()
     {
         healthText.text = "Health: " + health;
-        healthBar.fillAmount = health / 100f;
+        healthBar.fillAmount = (float)health / maxHealth;
     }
 }
